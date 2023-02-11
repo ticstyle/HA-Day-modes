@@ -1,0 +1,9 @@
+blueprint:
+  name: Day Modes
+  description:
+    This blueprint is built to set a helper (input_select.modes) to the following five states
+    (Away, Morning, Day, Evening, Night).
+    This helper is used by this blueprint to set Away if no family members or guests are at home.
+    The other ones are set for different times of the day if anyone is home.
+  domain: automation
+  source_url: https://gist.github.com/ticstyle/?
