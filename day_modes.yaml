@@ -6,4 +6,113 @@ blueprint:
     This helper is used by this blueprint to set Away if no family members or guests are at home.
     The other ones are set for different times of the day if anyone is home.
   domain: automation
-  source_url: https://gist.github.com/ticstyle/?
+  source_url: https://gist.github.com/ticstyle/bdc6f07a00d4f3d97e4967018f58c9e6
+
+# Inputs
+  input:
+    input_select_target:
+      name: The input select helper with (Away, Morning, Day, Evening, Night) options.
+      default: input_select.modes
+      selector:
+        entity:
+          domain: input_select
+    home_zone_target:
+      name: The zone you call home.
+      default: zone.home
+      selector:
+        entity:
+          domain: zone
+    morning_time:
+      name: Morning Time
+      description: Time to set morning mode
+      default: "06:00:00"
+      selector:
+        time:
+    day_time:
+      name: Day Time
+      description: Time to set day mode
+      default: "09:00:00"
+      selector:
+        time:
+    evening_time:
+      name: Evening Time
+      description: Time to set evening mode
+      default: "20:00:00"
+      selector:
+        time:
+    night_time:
+      name: Night Time
+      description: Time to set night mode
+      default: "23:00:00"
+      selector:
+        time:
+
+# Triggers
+trigger:
+  - platform: time
+    at: !input morning_time
+    id: morning
+  - platform: time
+    at: !input day_time
+    id: day
+  - platform: time
+    at: !input evening_time
+    id: evening
+  - platform: time
+    at: !input night_time
+    id: night
+  - platform: numeric_state
+    entity_id: zone.home
+    below: 1
+    id: no_one_home
+  - platform: numeric_state
+    entity_id: zone.home
+    id: anyone_home
+    above: -0.1
+
+# Automation Mode
+mode: restart
+max_exceeded: silent
+
+# Conditions
+condition: []
+
+# Actions
+action:
+  choose:
+    - conditions:
+        - condition: trigger
+          id: "morning"
+      sequence:
+        - service: input_select.select_option
+          data:
+            option: "Morning"
+          target:
+            entity_id: !input input_select_target
+    - conditions:
+        - condition: trigger
+          id: "day"
+      sequence:
+        - service: input_select.select_option
+          data:
+            option: "Day"
+          target:
+            entity_id: !input input_select_target
+    - conditions:
+        - condition: trigger
+          id: "evening"
+      sequence:
+        - service: input_select.select_option
+          data:
+            option: "Evening"
+          target:
+            entity_id: !input input_select_target
+    - conditions:
+        - condition: trigger
+          id: "night"
+      sequence:
+        - service: input_select.select_option
+          data:
+            option: "Night"
+          target:
+            entity_id: !input input_select_target
