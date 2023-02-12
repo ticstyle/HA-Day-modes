@@ -11,14 +11,14 @@ blueprint:
   # Inputs
   input:
     input_select_target:
-      name: Input select helper
+      name: Input Select Helper
       description: The input select helper with (Away, Morning, Day, Evening, Night) options. Automaticly selected if named "input_select.modes".
       default: input_select.modes
       selector:
         entity:
           domain: input_select
     home_zone_target:
-      name: Home zone
+      name: Home Zone
       description: The zone you call home.
       default: zone.home
       selector:
@@ -64,13 +64,13 @@ trigger:
     at: !input night_time
     id: night
   - platform: numeric_state
-    entity_id: zone.home
+    entity_id: !input home_zone_target
     below: 1
     id: no_one_home
   - platform: numeric_state
-    entity_id: zone.home
+    entity_id: !input home_zone_target
     id: anyone_home
-    above: -0.1
+    above: 0
 
 # Automation Mode
 mode: restart
@@ -82,39 +82,130 @@ condition: []
 # Actions
 action:
   choose:
+    # Morning
     - conditions:
-        - condition: trigger
-          id: "morning"
+        - condition: and
+          conditions:
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: morning
+                - condition: trigger
+                  id: anyone_home
+            - condition: numeric_state
+              entity_id: !input home_zone_target
+              above: 0
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: !input home_zone_target
+                  state: Morning
+            - condition: time
+              after: !input morning_time
+              before: !input day_time
       sequence:
         - service: input_select.select_option
           data:
             option: "Morning"
           target:
             entity_id: !input input_select_target
+
+    # Day
     - conditions:
-        - condition: trigger
-          id: "day"
+        - condition: and
+          conditions:
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: day
+                - condition: trigger
+                  id: anyone_home
+            - condition: numeric_state
+              entity_id: !input home_zone_target
+              above: 0
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: !input home_zone_target
+                  state: Day
+            - condition: time
+              after: !input day_time
+              before: !input evening_time
       sequence:
         - service: input_select.select_option
           data:
             option: "Day"
           target:
             entity_id: !input input_select_target
+
+    # Evening
     - conditions:
-        - condition: trigger
-          id: "evening"
+        - condition: and
+          conditions:
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: evening
+                - condition: trigger
+                  id: anyone_home
+            - condition: numeric_state
+              entity_id: !input home_zone_target
+              above: 0
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: !input home_zone_target
+                  state: Evening
+            - condition: time
+              after: !input evening_time
+              before: !input night_time
       sequence:
         - service: input_select.select_option
           data:
             option: "Evening"
           target:
             entity_id: !input input_select_target
+
+    # Night
     - conditions:
-        - condition: trigger
-          id: "night"
+        - condition: and
+          conditions:
+            - condition: or
+              conditions:
+                - condition: trigger
+                  id: night
+                - condition: trigger
+                  id: anyone_home
+            - condition: numeric_state
+              entity_id: !input home_zone_target
+              above: 0
+            - condition: not
+              conditions:
+                - condition: state
+                  entity_id: !input home_zone_target
+                  state: Night
+            - condition: time
+              after: !input night_time
+              before: !input morning_time
       sequence:
         - service: input_select.select_option
           data:
             option: "Night"
+          target:
+            entity_id: !input input_select_target
+
+    # Away
+    - conditions:
+        - condition: and
+          conditions:
+            - condition: trigger
+              id: no_one_home
+            - condition: numeric_state
+              entity_id: !input home_zone_target
+              below: 1
+      sequence:
+        - service: input_select.select_option
+          data:
+            option: "Away"
           target:
             entity_id: !input input_select_target
