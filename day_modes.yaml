@@ -1,5 +1,6 @@
 blueprint:
-  name: Day Modes
+  name: Day
+  # Version v2023.2.32
   description:
     This blueprint is built to set a helper (input_select.modes) to the following five states
     (Away, Morning, Day, Evening, Night).
@@ -19,7 +20,7 @@ blueprint:
           domain: input_select
     home_zone_target:
       name: Home Zone
-      description: The zone you call home.
+      description: The zone you call home. Automaticly selected if named "zone.home".
       default: zone.home
       selector:
         entity:
