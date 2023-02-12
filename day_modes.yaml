@@ -8,41 +8,43 @@ blueprint:
   domain: automation
   source_url: https://gist.github.com/ticstyle/bdc6f07a00d4f3d97e4967018f58c9e6
 
-# Inputs
+  # Inputs
   input:
     input_select_target:
-      name: The input select helper with (Away, Morning, Day, Evening, Night) options.
+      name: Input select helper
+      description: The input select helper with (Away, Morning, Day, Evening, Night) options. Automaticly selected if named "input_select.modes".
       default: input_select.modes
       selector:
         entity:
           domain: input_select
     home_zone_target:
-      name: The zone you call home.
+      name: Home zone
+      description: The zone you call home.
       default: zone.home
       selector:
         entity:
           domain: zone
     morning_time:
       name: Morning Time
-      description: Time to set morning mode
+      description: Time to set morning mode.
       default: "06:00:00"
       selector:
         time:
     day_time:
       name: Day Time
-      description: Time to set day mode
+      description: Time to set day mode.
       default: "09:00:00"
       selector:
         time:
     evening_time:
       name: Evening Time
-      description: Time to set evening mode
+      description: Time to set evening mode.
       default: "20:00:00"
       selector:
         time:
     night_time:
       name: Night Time
-      description: Time to set night mode
+      description: Time to set night mode.
       default: "23:00:00"
       selector:
         time:
