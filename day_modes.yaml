@@ -76,7 +76,7 @@ trigger:
 mode: restart
 max_exceeded: silent
 
-# Conditions
+# Automation Conditions
 condition: []
 
 # Actions
